@@ -22,9 +22,10 @@ model Session {
 
 model User{
     id String @id @default(uuid())
-    email String @unique
+    username String @unique
+    email String? @unique
     password String?
-    name String
+    name String?
     lastName String?
     phone Int?
     role Role @default(CLIENTE)

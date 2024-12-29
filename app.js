@@ -6,6 +6,8 @@ const methodOverride = require('method-override');
 const { create } = require('express-handlebars');
 const session = require('express-session');
 const passport = require('passport');
+const pgSession = require('connect-pg-simple')(session);
+const { Pool } = require('pg');
 const hbs = create({
     extname: 'hbs',
     defaultLayout: 'main',
@@ -23,6 +25,26 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
+
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+  });
+  
+  app.use(
+    session({
+      store: new pgSession({
+        pool: pool,
+        tableName: 'Session',
+      }),
+      secret: process.env.SESSION_SECRET || 'SECRET',
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+        sameSite: 'strict',
+      },
+    })
+  );
 app.use(morgan('dev'));
 app.use(passport.initialize());
 app.use(passport.session());

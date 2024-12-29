@@ -11,7 +11,6 @@ passport.use(new LocalStrategy(
       const user = await prisma.user.findUnique({
         where: { username: username }
       });
-
       if (!user) {
         return done(null, false, { message: 'Usuario no encontrado' });
       }
@@ -21,6 +20,7 @@ passport.use(new LocalStrategy(
       }
       return done(null, user);
     } catch (error) {
+      console.error('Error en la autenticación:', error);
       return done(error);
     }
   }
