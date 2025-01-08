@@ -1,0 +1,26 @@
+<form action="/" method="post">
+    <label for="cliente">Cliente</label>
+    <select name="cliente" id="cliente">
+        <option selected="true" disabled="disabled">Selecciona</option>
+        {{#each cliente}}
+        <option value='{{id}}'>{{username}}</option>
+        {{/each}}
+    </select>
+
+    <label for="employer">Empleado</label>
+    <select name="employer" id="employer">
+        <option selected="true" disabled="disabled">Selecciona</option>
+        {{#each user}}
+        <option value='{{id}}'>{{username}}</option>
+        {{/each}}
+
+    </select>
+
+    <label for="date">Fecha y hora de la consulta</label>
+    <input type="datetime-local" name="date" id="date">
+
+    <label for="time">Tiempo de la consulta</label>
+    <input type="time" name="time" id="time">
+
+    <button type="submit">Crear Cita</button>
+</form>

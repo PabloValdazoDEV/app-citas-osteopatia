@@ -20,37 +20,38 @@ app.use(express.json());
 app.use(express.urlencoded({
     extended: true
 }));
-app.use(session({
-    secret: process.env.SECRET_KEY || 'clave_secreta',
-    resave: false,
-    saveUninitialized: false
-}));
+// app.use(session({
+//     secret: process.env.SECRET_KEY || 'clave_secreta',
+//     resave: false,
+//     saveUninitialized: false
+// }));
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
+    ssl: process.env.DATABASE_SSL === 'true'
   });
   
-  app.use(
-    session({
-      store: new pgSession({
-        pool: pool,
-        tableName: 'Session',
-      }),
-      secret: process.env.SESSION_SECRET || 'SECRET',
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        sameSite: 'strict',
-      },
-    })
-  );
+ app.use(
+  session({
+    store: new pgSession({
+      pool: pool,
+      tableName: 'Session',
+    }),
+    secret: process.env.SESSION_SECRET || 'SECRET',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 30 * 24 * 60 * 60 * 1000
+    },
+  })
+);
+  
 app.use(morgan('dev'));
 app.use(passport.initialize());
-app.use(passport.session());
 require('./config/passport');
 app.use(methodOverride('_method'));
 app.use(express.static('public'));
+app.use(passport.session());
 
 app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');

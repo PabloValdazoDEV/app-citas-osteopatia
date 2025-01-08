@@ -31,15 +31,19 @@ model User{
     role Role @default(CLIENTE)
     createdAt DateTime @default(now())
     updateAt DateTime @updatedAt
-    citas Cita[]
+    citasCliente Cita[] @relation("CitasComoCliente")
+    citasEmployer Cita[] @relation("CitasComoEmployer")
     fichas Ficha[]
 }
 
 model Cita{
     id String @id @default(uuid())
-    cliente User @relation(fields: [id_cliente], references: [id])
+    cliente     User     @relation("CitasComoCliente", fields: [id_cliente], references: [id])
+    employer    User     @relation("CitasComoEmployer", fields: [id_employer], references: [id])
     id_cliente String
+    id_employer String
     date DateTime
+    time DateTime
     createdAt DateTime @default(now())
     updateAt DateTime @updatedAt
 }
@@ -48,6 +52,7 @@ model Ficha{
     id String @id @default(uuid())
     cliente User @relation(fields: [id_cliente],references: [id])
     id_cliente String
+    text String
     imagenes String[]
     createdAt DateTime @default(now())
     updateAt DateTime @updatedAt

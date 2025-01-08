@@ -3,9 +3,9 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport')
 const bcrypt = require('bcrypt')
-const isAuthenticated = require('../middelware/isAuthenticated')
+const isAdmin = require('../middelware/isAdmin')
 
-router.get('/register', (req, res)=>{
+router.get('/register',isAdmin, (req, res)=>{
     res.render('register')
 })
 
@@ -24,10 +24,10 @@ router.post('/register', async (req, res)=>{
                 role: role
             }
         });
-        res.redirect('/auth/login')
+        res.redirect('/login')
     } catch (error) {
         console.error(`El error es ${error}`)
-        res.status(500).redirect('/auth/register')
+        res.status(500).redirect('/register')
     }
 })
 
@@ -37,8 +37,22 @@ router.get('/login', (req, res)=>{
 
 router.post('/login', passport.authenticate('local', {
     successRedirect: '/citas',
-    failureRedirect: '/auth/login',
+    failureRedirect: '/login',
     failureFlash: false,
   }));
+
+  router.get('/logout', function(req, res, next){
+    try {
+        req.logout(function(err) {
+          if (err) { return next(err); }
+          res.redirect('/login');
+        });
+        
+    } catch (error) {
+        console.error(`El error es ${error}`)
+        res.status(500).redirect('/login')
+    }
+  });
+
 
 module.exports = router
